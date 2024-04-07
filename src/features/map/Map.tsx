@@ -6,11 +6,9 @@ import { getMap, setPolygons } from './mapSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { icons } from '../../assets/icons';
-import { Box, Card, Divider, Grid, Theme, Typography } from '@mui/material';
+import { Box, Card, Grid, Typography } from '@mui/material';
 
 const Map = () => {
-
-    const dispatch = useDispatch();
     const { polygons, houses } = useSelector(getMap);
 
     const [open, setOpen] = useState(-1);
@@ -19,12 +17,6 @@ const Map = () => {
     const [center, setCenter] = useState({
         lat: 50.086444, lng: 14.411963
     });
-
-    function handleCenterChanged() {
-        if (!mapRef.current) return;
-        const newPos = (mapRef.current as any).getCenter().toJSON();
-        setCenter(newPos);
-    }
 
     const containerStyle = {
         width: '100%',
@@ -38,13 +30,6 @@ const Map = () => {
 
     const onLoad = React.useCallback(function callback(map: any) {
         mapRef.current = map;
-    }, []);
-
-    useEffect(() => {
-        const query = ref(database, `${"polygons"}`);
-        return onValue(query, (snapshot) => {
-            dispatch(setPolygons(snapshot.val()))
-        });
     }, []);
 
     return (
@@ -118,6 +103,7 @@ const Map = () => {
                                     }}
                                     label={{
                                         text: `${polygon.influence ?? 0}`,
+                                        // text: `${i ?? 0}`,
                                         fontWeight: "bold",
                                         className: 'marker-label'
 
@@ -177,7 +163,7 @@ const Map = () => {
                                     [...houses]
                                         .sort((a, b) => b.influence - a.influence)
                                         .map((house, i) =>
-                                            <Grid item xs={4}>
+                                            <Grid item xs={4} key={i}>
                                                 <Box key={house.name} sx={{
                                                     p: 1,
                                                     display: "flex",

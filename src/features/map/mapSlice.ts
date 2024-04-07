@@ -9,7 +9,7 @@ interface IMap {
     houses: IHouse[];
 }
 
-interface IPolygon {
+export interface IPolygon {
     name: string;
     desc: string;
     position: { lat: number, lng: number};
@@ -19,6 +19,8 @@ interface IPolygon {
     first: number;
     second: number;
     third: number;
+    quest: string;
+    key: string;
 }
 
 export interface IHouse {

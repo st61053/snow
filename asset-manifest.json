@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/snow/static/css/main.ccf9e069.css",
+    "main.js": "/snow/static/js/main.81ee47de.js",
+    "static/media/knight-2.png": "/snow/static/media/knight-2.16bbd183a9ebffad10b2.png",
+    "static/media/dragon.png": "/snow/static/media/dragon.fee272a869f8af30c0bc.png",
+    "static/media/barrel.png": "/snow/static/media/barrel.cbc22e9b65d9953ea84f.png",
+    "static/media/blacksmith.png": "/snow/static/media/blacksmith.25eaa21bb362639eee0a.png",
+    "static/media/shield.png": "/snow/static/media/shield.5b60802181f09fb13c21.png",
+    "static/media/priest.png": "/snow/static/media/priest.6b9034f11e8d9e86ccdd.png",
+    "static/media/pirate-ship.png": "/snow/static/media/pirate-ship.6e92031deb39a36f8726.png",
+    "static/media/lannister.png": "/snow/static/media/lannister.49dae263c5d2976bf970.png",
+    "static/media/tyrell.png": "/snow/static/media/tyrell.1213acfb8caa86396be3.png",
+    "static/media/castle-3.png": "/snow/static/media/castle-3.b35eb8c730122c75ab2b.png",
+    "static/media/stark.png": "/snow/static/media/stark.7b23bc844988d2be7909.png",
+    "static/media/medieval-house.png": "/snow/static/media/medieval-house.d7eaef5334547ccfa366.png",
+    "index.html": "/snow/index.html",
+    "main.ccf9e069.css.map": "/snow/static/css/main.ccf9e069.css.map",
+    "main.81ee47de.js.map": "/snow/static/js/main.81ee47de.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ccf9e069.css",
+    "static/js/main.81ee47de.js"
+  ]
+}

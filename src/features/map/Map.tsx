@@ -32,6 +32,10 @@ const Map = () => {
         mapRef.current = map;
     }, []);
 
+    useEffect(() => {
+        console.log("map");
+      }, []);
+
     return (
         <>
             {

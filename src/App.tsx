@@ -24,25 +24,30 @@ const App = () => {
   }));
 
   useEffect(() => {
+    console.log("run");
     const query = ref(database, `${"polygons"}`);
     return onValue(query, (snapshot) => {
       dispatch(setPolygons(snapshot.val()))
     });
   }, []);
 
+  useEffect(() => {
+    console.log(polygons);
+  }, [polygons]);
+
   return (
     <Box sx={{
       width: "100%",
       height: "100vh",
     }}>
-      {polygons.length > 0 && <Routes>
-        <Route key={`main`} path={"/"} element={<Map />} />
+      <Routes>
+        <Route key={`main`} path={"/map"} element={<Map />} />
         {
           routes.map((route, i) => (
             <Route key={`route_${i}`} path={route.path} element={route.element} />
           ))
         }
-      </Routes>}
+      </Routes>
     </Box>
   );
 }

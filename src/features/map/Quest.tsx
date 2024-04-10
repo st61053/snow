@@ -1,9 +1,19 @@
-import React from 'react'
-import { IPolygon } from './mapSlice'
+import React, { useEffect, useState } from 'react'
+import { IPolygon, getMap } from './mapSlice'
 import { Box, Card, Divider, Typography } from '@mui/material'
 import { icons } from '../../assets/icons'
+import { useSelector } from 'react-redux'
 
-const Quest = ({ polygon, i }: { polygon: IPolygon, i: number }) => {
+const Quest = ({ questKey }: { questKey: string }) => {
+
+    const [polygon, setPolygon] = useState<IPolygon>();
+
+    const { polygons } = useSelector(getMap);
+
+    useEffect(() => {
+        setPolygon(polygons.find((p) => p.key === questKey));
+    }, [polygons]);
+
     return (
         <Box sx={{
             display: "flex",
@@ -13,72 +23,74 @@ const Quest = ({ polygon, i }: { polygon: IPolygon, i: number }) => {
             height: "100%",
             backgroundColor: "#FDEBD0"
         }}>
-            <Card sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                width: "calc(100% - 2em)",
-                height: "calc(100% - 2em)",
-            }}>
-                <Box sx={{
+            {polygon &&
+                <Card sx={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: 2
+                    justifyContent: "space-between",
+                    width: "calc(100% - 2em)",
+                    height: "calc(100% - 2em)",
                 }}>
                     <Box sx={{
-                        p: 3,
                         display: "flex",
-                        justifyContent: "space-between"
+                        flexDirection: "column",
+                        gap: 2
                     }}>
                         <Box sx={{
+                            p: 3,
                             display: "flex",
-                            flexDirection: "column",
+                            justifyContent: "space-between"
                         }}>
-                            <Typography
-                                variant='h6'
-                                sx={{
-                                    fontWeight: "bold"
-                                }}
-                            >
-                                {polygon?.name}
+                            <Box sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                            }}>
+                                <Typography
+                                    variant='h6'
+                                    sx={{
+                                        fontWeight: "bold"
+                                    }}
+                                >
+                                    {polygon?.name}
+                                </Typography>
+                                <Typography
+                                    variant='caption'
+                                    sx={{
+                                        color: "grey"
+                                    }}
+                                >
+                                    {`${polygon?.position.lat}, ${polygon?.position.lng}`}
+                                </Typography>
+                            </Box>
+                            {polygon && <img src={icons[polygons.indexOf(polygon)]} width={"50px"} height={"50px"}></img>}
+                        </Box>
+                        <Box sx={{
+                            px: 3
+                        }}>
+                            <Typography>
+                                {polygon?.quest}
                             </Typography>
-                            <Typography
-                                variant='caption'
+                        </Box>
+                    </Box>
+                    <Box>
+                        <Divider />
+                        <Box sx={{
+                            p: 3,
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center"
+                        }}>
+                            <Typography variant='h6'
                                 sx={{
                                     color: "grey"
                                 }}
                             >
-                                {`${polygon?.position.lat}, ${polygon?.position.lng}`}
+                                {`-- ${polygon?.influence} --`}
                             </Typography>
                         </Box>
-                        <img src={icons[i]} width={"50px"} height={"50px"}></img>
                     </Box>
-                    <Box sx={{
-                        px: 3
-                    }}>
-                        <Typography>
-                            {polygon?.quest}
-                        </Typography>
-                    </Box>
-                </Box>
-                <Box>
-                    <Divider />
-                    <Box sx={{
-                        p: 3,
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center"
-                    }}>
-                        <Typography variant='h6'
-                            sx={{
-                                color: "grey"
-                            }}
-                        >
-                            {`-- ${polygon?.influence} --`}
-                        </Typography>
-                    </Box>
-                </Box>
-            </Card>
+                </Card>
+            }
         </Box>
     )
 }

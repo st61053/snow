@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../../app/store'
-import { houses } from './constants';
+import { ref, set } from 'firebase/database';
+import { database } from '../../utils/firebase';
 
 // Define a type for the slice state
 interface IMap {
@@ -12,7 +13,7 @@ interface IMap {
 export interface IPolygon {
     name: string;
     desc: string;
-    position: { lat: number, lng: number};
+    position: { lat: number, lng: number };
     coords: google.maps.LatLngLiteral[];
     color: string;
     influence: number;
@@ -28,14 +29,14 @@ export interface IHouse {
     name: string;
     influence: number;
     color: string;
-    icon: string;
+    shields: number;
 }
 
 
 // Define the initial state using that type
 const initialState: IMap = {
     polygons: [],
-    houses: houses
+    houses: []
 }
 
 export const mapSlice = createSlice({
@@ -45,23 +46,24 @@ export const mapSlice = createSlice({
     reducers: {
         setPolygons: (state, action: PayloadAction<IPolygon[]>) => {
             state.polygons = action.payload;
+        },
+        setHouses: (state, action: PayloadAction<IHouse[]>) => {
 
-            state.houses = state.houses.map((house) => ({
+            state.houses = action.payload.map((house) => ({
                 ...house,
-                influence: state.polygons.reduce((prev, next) => {
-                    
-                    if (next.first === house.id) return prev += next.influence;
-                    if (next.second === house.id) return prev += (next.influence / 100) * 80;
-                    if (next.third === house.id) return prev += (next.influence / 100) * 60;
-                    return prev;
-
-                }, 0)
+                influence: house.influence - ((5 - house.shields) * 20)
             }))
         },
+
+
     },
 })
 
-export const { setPolygons } = mapSlice.actions
+const writeHouseData = (house: IHouse) => {
+
+}
+
+export const { setPolygons, setHouses } = mapSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const getMap = (state: RootState) => state.mapSlice

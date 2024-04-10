@@ -1,53 +1,55 @@
 import { Box } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import Map from './features/map/Map';
+import React, { ReactNode, useEffect } from 'react';
 
-import {
-  createBrowserRouter,
-  Route,
-  RouterProvider,
-  Routes,
-} from "react-router-dom";
-import Quest from './features/map/Quest';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMap, setPolygons } from './features/map/mapSlice';
-import { ref, onValue } from 'firebase/database';
+import { getMap, setHouses, setPolygons } from './features/map/mapSlice';
+import { ref, onValue, set } from 'firebase/database';
 import { database } from './utils/firebase';
 
-const App = () => {
+const App = ({children} : {children: ReactNode}) => {
   const dispatch = useDispatch();
-  const { polygons } = useSelector(getMap);
 
-  const routes = polygons.map((polygon, i) => ({
-    path: `/${polygon?.key}`,
-    element: <Quest polygon={polygon} i={i} />
-  }));
+  const {polygons, houses} = useSelector(getMap)
 
   useEffect(() => {
-    console.log("run");
-    const query = ref(database, `${"polygons"}`);
-    return onValue(query, (snapshot) => {
+    const polygonsQuery = ref(database, `${"polygons"}`);
+    return onValue(polygonsQuery, (snapshot) => {
       dispatch(setPolygons(snapshot.val()))
     });
   }, []);
 
   useEffect(() => {
-    console.log(polygons);
-  }, [polygons]);
+    const housesQuery = ref(database, `${"houses"}`);
+    return onValue(housesQuery, (snapshot) => {
+      dispatch(setHouses(snapshot.val()))
+    });
+  }, []);
+
+  useEffect(() => {
+    houses.forEach((house) => {
+      const updatedHouse = ({
+          ...house,
+          influence: polygons.reduce((prev, next) => {
+
+              if (next.first === house.id) return prev += next.influence;
+              if (next.second === house.id) return prev += (next.influence / 100) * 80;
+              if (next.third === house.id) return prev += (next.influence / 100) * 60;
+              return prev;
+
+          }, 0)
+      })
+      set(ref(database, 'houses/' + updatedHouse.id), {
+          ...updatedHouse
+      });
+  })
+  }, [polygons])
 
   return (
     <Box sx={{
       width: "100%",
       height: "100vh",
     }}>
-      <Routes>
-        <Route key={`main`} path={"/map"} element={<Map />} />
-        {
-          routes.map((route, i) => (
-            <Route key={`route_${i}`} path={route.path} element={route.element} />
-          ))
-        }
-      </Routes>
+      {children}
     </Box>
   );
 }

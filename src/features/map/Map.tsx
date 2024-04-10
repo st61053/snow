@@ -7,6 +7,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { icons } from '../../assets/icons';
 import { Box, Card, Grid, Typography } from '@mui/material';
+import { housesIcons } from './constants';
+
+import life from "../../assets/life.png";
 
 const Map = () => {
     const { polygons, houses } = useSelector(getMap);
@@ -31,10 +34,6 @@ const Map = () => {
     const onLoad = React.useCallback(function callback(map: any) {
         mapRef.current = map;
     }, []);
-
-    useEffect(() => {
-        console.log("map");
-      }, []);
 
     return (
         <>
@@ -162,37 +161,63 @@ const Map = () => {
             }}>
                 <Grid container>
                     <Grid item xs={12}>
-                            <Grid container>
-                                {
-                                    [...houses]
-                                        .sort((a, b) => b.influence - a.influence)
-                                        .map((house, i) =>
-                                            <Grid item xs={4} key={i}>
+                        <Grid container>
+                            {
+                                [...houses]
+                                    .map((house, i) =>
+                                        <Grid item xs={4} key={i}>
+                                            <Box sx={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                            }}>
                                                 <Box key={house.name} sx={{
                                                     p: 1,
+                                                    pb: 0.5,
                                                     display: "flex",
                                                     alignItems: "center",
                                                     gap: 1,
                                                     justifyContent: "center"
                                                 }}>
-                                                    <img src={house.icon} width={"25px"} height={"25px"}></img>
+                                                    <img src={housesIcons[house.id]} width={"25px"} height={"25px"}></img>
                                                     <Typography
                                                         variant='caption'>
                                                         {`-`}
                                                     </Typography>
                                                     <Typography
-                                                    sx={{
-                                                        fontWeight: "bold",
-                                                        color: house.color
-                                                    }}
+                                                        sx={{
+                                                            fontWeight: "bold",
+                                                            color: house.color
+                                                        }}
                                                         variant='caption'>
                                                         {`${house.influence.toFixed(2)}`}
                                                     </Typography>
                                                 </Box>
-                                            </Grid>
-                                        )}
+                                                <Box sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    gap: 0.3,
+                                                    pb: 1
+                                                }}>
+                                                    {[0, 1, 2, 3, 4].map((num) =>
+                                                        <img
+                                                        key={num}
+                                                        style={{
+                                                            filter: house.shields > num ? "grayscale(0%)" : "grayscale(100%)"
+                                                        }}
+                                                            src={life}
+                                                            width={"12px"}
+                                                            height={"12px"}>
 
-                            </Grid>
+                                                        </img>
+                                                    )}
+
+                                                </Box>
+                                            </Box>
+                                        </Grid>
+                                    )}
+
+                        </Grid>
                     </Grid>
                 </Grid>
 

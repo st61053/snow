@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import React, { ReactNode, useEffect } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { getMap, setHouses, setPolygons } from './features/map/mapSlice';
+import { getMap, setDad, setHouses, setMessage, setPolygons } from './features/map/mapSlice';
 import { ref, onValue, set } from 'firebase/database';
 import { database } from './utils/firebase';
 
@@ -22,6 +22,20 @@ const App = ({children} : {children: ReactNode}) => {
     const housesQuery = ref(database, `${"houses"}`);
     return onValue(housesQuery, (snapshot) => {
       dispatch(setHouses(snapshot.val()))
+    });
+  }, []);
+
+  useEffect(() => {
+    const messagesQuery = ref(database, `${"messages"}`);
+    return onValue(messagesQuery, (snapshot) => {
+      dispatch(setMessage(snapshot.val()))
+    });
+  }, []);
+
+  useEffect(() => {
+    const dadQuery = ref(database, `${"dads"}`);
+    return onValue(dadQuery, (snapshot) => {
+      dispatch(setDad(snapshot.val()))
     });
   }, []);
 

@@ -8,6 +8,8 @@ import { database } from '../../utils/firebase';
 interface IMap {
     polygons: IPolygon[];
     houses: IHouse[];
+    message: IMessage;
+    dad: IDad;
 }
 
 export interface IPolygon {
@@ -30,13 +32,41 @@ export interface IHouse {
     influence: number;
     color: string;
     shields: number;
+    dads: number;
+}
+
+export interface IMessage {
+    title: string;
+    active: number;
+    message: string;
+}
+
+export interface IDad {
+    name: string;
+    desc: string;
+    active: number;
+    position: { lat: number, lng: number };
 }
 
 
 // Define the initial state using that type
 const initialState: IMap = {
     polygons: [],
-    houses: []
+    houses: [],
+    message: {
+        title: "",
+        active: 0,
+        message: ""
+    },
+    dad: {
+        name: "Taťka",
+        desc: "",
+        position: {
+            lng: 0,
+            lat: 0
+        },
+        active: 0
+    }
 }
 
 export const mapSlice = createSlice({
@@ -54,16 +84,18 @@ export const mapSlice = createSlice({
                 influence: house.influence - ((5 - house.shields) * 20)
             }))
         },
+        setMessage: (state, action: PayloadAction<IMessage[]>) => {
+            state.message = action.payload[0]
+        },
+        setDad: (state, action: PayloadAction<IDad[]>) => {
+            state.dad = action.payload[0]
+        },
 
 
     },
 })
 
-const writeHouseData = (house: IHouse) => {
-
-}
-
-export const { setPolygons, setHouses } = mapSlice.actions
+export const { setPolygons, setHouses, setMessage, setDad } = mapSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const getMap = (state: RootState) => state.mapSlice

@@ -6,13 +6,17 @@ import { getMap, setPolygons } from './mapSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { icons } from '../../assets/icons';
-import { Box, Card, Grid, Typography } from '@mui/material';
+import { Box, Card, Dialog, DialogTitle, Divider, Grid, Typography, useTheme } from '@mui/material';
 import { housesIcons } from './constants';
 
 import life from "../../assets/life.png";
+import dadIco from "../../assets/dad.png";
+import { relative } from 'path';
 
 const Map = () => {
-    const { polygons, houses } = useSelector(getMap);
+    const { polygons, houses, message, dad } = useSelector(getMap);
+
+    const theme = useTheme();
 
     const [open, setOpen] = useState(-1);
 
@@ -130,7 +134,9 @@ const Map = () => {
                                                     {`${polygon.name}`}
                                                 </Typography>
                                                 <Typography
+                                                    lineHeight={1.2}
                                                     sx={{
+                                                        pt: 0.5,
                                                         color: "grey",
                                                         pb: 0.5
                                                     }}
@@ -150,6 +156,53 @@ const Map = () => {
                         }
                         )
                     }
+
+                    {
+                        dad.active && <Marker
+                            key={`${dad.name}`}
+                            position={dad.position}
+                            icon={{
+                                url: dadIco,
+                                scaledSize: new google.maps.Size(30, 30),
+                            }}
+                            onClick={() => setOpen(open === 20 ? -1 : 20)}
+                        >
+                            {
+                                dad.active && open === 20 &&
+                                <InfoWindow
+                                    options={{ disableAutoPan: true }}
+                                >
+                                    <Box sx={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        p: 0.5
+                                    }}>
+                                        <Typography
+                                            lineHeight={1}
+                                            sx={{ fontWeight: "bold" }}>
+                                            {`${dad.name}`}
+                                        </Typography>
+                                        <Typography
+                                            lineHeight={1.2}
+                                            sx={{
+                                                pt: 0.5,
+                                                color: "grey",
+                                                pb: 0.5
+                                            }}
+                                            variant='caption'>
+                                            {dad.desc}
+                                        </Typography>
+                                        <Typography
+                                            variant='caption'>
+                                            {`${dad.position.lat}, ${dad.position.lng}`}
+                                        </Typography>
+                                    </Box>
+                                </InfoWindow>
+                            }
+
+                        </Marker>
+                    }
+
 
 
                 </GoogleMap >
@@ -172,13 +225,31 @@ const Map = () => {
                                             }}>
                                                 <Box key={house.name} sx={{
                                                     p: 1,
-                                                    pb: 0.5,
+                                                    pb: 0.3,
                                                     display: "flex",
                                                     alignItems: "center",
                                                     gap: 1,
-                                                    justifyContent: "center"
+                                                    justifyContent: "center",
                                                 }}>
-                                                    <img src={housesIcons[house.id]} width={"25px"} height={"25px"}></img>
+                                                    <Box sx={{
+                                                        position: "relative"
+                                                    }}>
+                                                        <img src={housesIcons[house.id]} width={"25px"} height={"25px"}></img>
+                                                        {
+                                                            [0, 1].map((num) => (
+                                                                num < house.dads &&
+                                                                <Box sx={{
+                                                                    position: "absolute",
+                                                                    bottom: 0,
+                                                                    right: num* -9,
+                                                                    display: "flex"
+                                                                }}>
+                                                                    <img src={dadIco} width={"10px"} height={"10px"}></img>
+                                                                </Box>
+                                                            ))
+                                                        }
+                                                    </Box>
+
                                                     <Typography
                                                         variant='caption'>
                                                         {`-`}
@@ -201,10 +272,10 @@ const Map = () => {
                                                 }}>
                                                     {[0, 1, 2, 3, 4].map((num) =>
                                                         <img
-                                                        key={num}
-                                                        style={{
-                                                            filter: house.shields > num ? "grayscale(0%)" : "grayscale(100%)"
-                                                        }}
+                                                            key={num}
+                                                            style={{
+                                                                filter: house.shields > num ? "grayscale(0%)" : "grayscale(100%)"
+                                                            }}
                                                             src={life}
                                                             width={"12px"}
                                                             height={"12px"}>
@@ -220,10 +291,19 @@ const Map = () => {
                         </Grid>
                     </Grid>
                 </Grid>
-
-
-
             </Card>
+
+            <Dialog open={Boolean(message.active)}>
+                <DialogTitle>{message.title}</DialogTitle>
+                <Box sx={{
+                    px: 3,
+                    pb: 4
+                }}>
+                    <Typography variant='caption'>
+                        {message.message}
+                    </Typography>
+                </Box>
+            </Dialog>
         </>
     )
 }
